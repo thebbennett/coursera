@@ -1,0 +1,113 @@
+---
+title: "Week 2 Notes"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Coding Standards in R
+Write code using text editor and text file
+Indent your code (8 spaces)
+Limit the width of your code (80 columns)
+Limit the length of functions - one basic activity 
+
+##Markdown
+*italics*  
+**bold**  
+#Main heading  
+## secondary heading  
+### this is a tertiary heading  
+
+- first item in a list
+- second item in list
+- third iten in list
+
+1. first
+2. second
+3. third
+
+[text](url)
+
+Advanced linking
+[text][1] and [text][2]
+[1]: url "text"
+[2]: url "text"
+
+Newlines
+Firt line  (double space after the end of a line)  
+Second line
+
+##R markdown
+play on the word markup language
+designed to help you write things
+created by John Gruber
+
+R Markdown
+allows on to create documents containing "live" R code
+R code is evaluated as part of the processing of the markdown
+Results from R code are inserted into markdown document
+A core tool in literate stastical programming 
+
+R markdown can be converted to standard markdown using the knitr package
+Create slides in R Markdwon using slidify
+
+R markdown >> markdown >> html
+
+Never edit intermediate file or html file
+
+## Literate Stastical Programming 
+Put the data and the code together in the same document
+Have a single document that integrates the data analysis 
+
+Original idea came from Don Knuth  
+an article is a stream of text and code  
+weave <- human readable  
+tangle <- machine readable  
+
+Original Sweave used LaTeX and R  
+
+Keep track of things, perhaps with a version control system to track   snapshots/changes  
+Use software whose operation can be coded  
+Don't save output  
+Save data in non-proprietary formats   
+
+##knitr
+R package written by Yihui Xie  
+Supports rMarkdown, LaTeX, and HTML  
+can export to PDF, HTMK  
+Built right into RStudio for your convenience  
+
+knit 2 html("document.Rmd")  
+
+####A few notes
+knitr will fill a new doc with filler text. DELETE IT
+All R code goes between markers
+Code chunks can have numes
+{r firstchunk, echo = FALSE, results = "hide"}
+
+#My first knitr doc
+##Introduction
+Sys.time()  
+
+{r scatterplot, fig.height =4}  
+
+knitr produces an HTML file  
+
+```{r table, results = "asis"}
+library(xtable)
+xt <- xtable(summary(fit))
+print(xt, type = "html")
+```
+Can set Global Option
+
+{r setoptions, echo=FALSE}
+opts_chunk$set(exho = FALSE, results = "hide")
+
+cache the computation
+cache=TRUE
+after first run, results are loaded from cache
+dependencies are not checkd explicitly 
+
+

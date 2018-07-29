@@ -1,0 +1,159 @@
+---
+title: "Course 3 Week 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+data are values of quant or qual variables belonging to a set of items
+
+raw <- original source of data 
+often difficulty for data analyses
+
+data anlysis includes processing 
+keep a record of all that you did 
+
+processed data <- ready for analysis 
+
+raw data
+tidy data set
+code book describing ea variable and its values 
+explicit and exact recipe you used to go from 1 -> 2,3
+
+if (!file.exists("data")){
+dir.create("data")
+}
+
+download.fie()
+*downloads from the internet
+* url, destfile, method 
+
+fileUrl <- "url"
+download.file(fileUrl, destfile = "./data/camera.csv", method = curl)
+curl <- bc https, if from mac specify method 
+list.files("./data")
+
+dateDownloaded <- date()
+dateDownloaded
+
+library(clsx)
+cameraDAta <- read.xlsx(filepath, sheetIndex = 1, header = TRUE)
+colIndex <- 2:3
+rowIndex <- 1:4
+
+
+XML
+extensible markup language
+used to store structured data
+widely used in internet applications 
+exctrating XML is the basis for most web scraping 
+2 components
+markiup - labels that give text structure
+content - actual text of the doc 
+
+TAGS
+<section
+</section
+<line-break .>
+
+Elements
+<Greeting> Hello, world </Greeting>
+
+Attributes
+< img src = "jeff.jpg"
+ alt ="instructor"/>
+ 
+ library(XML)
+ fileURl <- ""
+ doc <xmlTreeParse(fileUrl, useInternal=TRUE)
+ rootNode <- xmlRoot(doc) #wrapper element for the entire 
+ xmlName(rootNode)
+ names(rootNode) #what all the nested elements are 
+ 
+ rootNode[[1]]
+ rootNode[[1]][[1]]
+ 
+ xmlSApply(rootNode, xmlValue)
+ pass parsed xml objext, apply amlvalue
+ get the value looped through rootNode
+ 
+ XPath language 
+ /node to level node
+ //node node at nay level
+ node[@attr-name]
+ node[attr-name='bob']
+ 
+ xpathSApply(rootNode, "//name", xmlValue)
+ 
+ xpathSApply(rootNode, "//price", xmlValue)
+ 
+ 
+ HTML
+ doc <- htmlTreeParse(fileUrl, useInteral=TRUE)
+ scores <- xpathSApply(doc, "//li[@class = 'score'], xmlValue)
+ 
+ JSON
+ javascript object notation 
+ lightweight data storage
+ common format for data from APIs
+
+library(jsonlite)
+jsonData <- fromJSON("url")
+names(jsonData)names(jsonData$owner)
+
+myjson <- toJSON(iris, pretty = TRUE)
+cat(myjson)
+
+json.org
+
+data.table
+inherets from data.frame
+written in C, so its faster
+fast @ subsetting, group, and updating 
+
+```{}
+library(data.table)
+DT = data.table(x=rnorm(9), y=rep(c("a", "b", "c"), each = 3), z=rnorm(9))
+```
+
+```{}
+DT[2,]
+DT[DT$y=="a"]
+DT[c(2,3)]  #second and third rows from data table 
+```
+
+subsetting function is modeified for data.table 
+argument you pass after the comma is an expression
+an expression is a collection of statements inclosed in curly brackets
+
+```{}
+DT[,list(mean(x), sum(z))]
+DT[,table(y)]
+DT[,w:=z^2]  #add new col where z^2
+
+DT[,m:={tmp <-(x+z); log2(tmp+5)}]
+DT[,b:=mean(x+w), by=a]
+
+DT[, .N, by = x]
+
+DT <- data.table(x=rep(c("a", "b","c"), each=100), y=rnorm(300))
+setkey(DT,x)
+DT['a']
+
+DT1 <- data.table()
+DT2 <- data.table
+setkey(DT1, x); setkey(DT2, x)
+merge(DT1, DT2)
+
+
+big_df <- data.frame
+file <- tempfile()
+write.table(big_df, file = file, ...)
+systen.time(fread(file))
+
+system.time(read.table(file, header=TRUE, sept"\t"))
+
+library(swirl)
+```

@@ -1,0 +1,190 @@
+---
+title: "Reproducible Research"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Communicate reserch to others
+So they can do the analysis themselves
+
+##Reproducible Research Concepts and Ideas
+
+The ultimate standard for strenghtneing scientific evidence is replication of findings and conducting studies with independent:
+- investigators
+- data
+- analytical methods
+- laboratores
+- instruments
+
+Replication is particularly important in studies that can impact broad policy or regulatory decisions
+
+Reproducible Research: makee analytic data and code available so that others may reprorudce findings
+
+Why do we need repdroducible research?
+make the data available from the original study. make the competational methods available from original study.
+
+new technologies increasing data collection throughout, data are more complex and extremely high dimensional
+
+Existing databases can be merged into new megadatabases
+
+Computer power is greatly increased, allowing for more sophisticated analyses
+
+For every field "X" there si a field "Computational X"
+
+Data/metadata be available
+computer code be cully specified
+All steps encompassing computational analysis 
+
+###What Do We Need
+Analytic data are available
+Analytic code are available
+Documentation of code and data
+Standard means of distribution
+
+Players: authors, readers
+
+
+Literate Stastical Programming
+article is a stream of text and code
+analysis code is divided into text and code "chunks"
+each code chunk loads data and computes results
+presentation code formats results (tables, figures, etc.)
+article text explains what is going on
+Literate programs can be weaved to produce human-readable documents and tangled to produce machine readable documents
+
+Sweave <- uses a documentation language called LaTeX and R
+
+kntir <- alternative to Sweave
+developed by Yihui Xie
+
+#Script Everything
+Write everything down 
+Defining and developing the notation of specifing a researching project for data anlysis 
+How do we write down the things that we did.
+Whatw as analyzed what was done.
+Main rule: write a script
+
+#Structure of a Data Analysis 
+define the question
+define the ideal data set
+determine what data you can access
+obtain the data
+clean the data
+
+1. Defining a question
+An example:
+Can I auto detect emails that are SPAM?
+Make it concrete:
+can i use quant char of the emails to classify them as SPAM/HAM
+
+Define the ideal data set
+descriptive - whole pop
+exploratory - random sample with many variables measured 
+inferential - the right pop
+predictive - a training and test data from same pop
+casual - data from a randominzed study
+mechanistic - data about all components of the system
+
+Obtain the data
+try to obtain raw data
+be sure to reference the source
+time and data when you accessed the data
+record the URL
+
+Clean the data
+raw data often needs to be processed
+if it is pre processed, make sure you understand how
+understand the source of the data
+may need reformatting, subsampling - record these steps
+*determine if the data are good enough* if not, quit or change data
+
+Subsampling our data sat
+split data into test set and training set
+part of data to build the model
+then another part to determine how good model is at making the prediction 
+
+* look at summaries of the data
+* check for missing data
+* create exploratory plots
+* perform exploratory analyses 
+
+names()
+head()
+table(data$col)
+plot(col ~ col)
+hCluster (hieracharl clustering) plot dendrogram
+
+Stastical prediction/modeling
+should be informed by the results of your exploratory analysis 
+Exact methods depend on the question of interest
+Transformations/processing should be accounted for when necessary
+measures of uncertainity should eb reported
+
+Get a measure of uncertainty 
+
+Interpret Results
+use the appropriate language
+-describes
+-correlates with/associated with
+- leads to/causes
+-predicts
+Gives an explanation
+Interpret coefficients 
+Interpret measures of uncertainty
+
+
+Synthesize/write-up results
+lead with question
+descrivedescribe the approach
+interpret results
+Challenge results
+
+Organizing Data Analysis
+Data
+- raw data
+- processed data
+Figures 
+- explroatory figures
+- final figures
+R Code 
+- raw unused scripts
+- final scripts
+- r markdown files
+Text
+- README files
+- text of analysis / report
+
+
+###Raw Data
+should be stored in your analysis folder
+If accessed from the web, include url, description, and data accessed in README
+
+###Processed Data
+should be named so it is easy to see which script generated the data
+the processsing script, processed data mapping should occur in the README
+proccessed data should be tidy 
+
+###Exploratory Figures
+not necessarily part of final report
+They do not need to be pretty
+
+###final figures
+usually a small subset of the original figures
+axes/colors set to make the figure clear
+possibly multiple panels
+
+###Raw scripts
+may be less commented
+may be multiple versions
+may include analyses that are later discarded
+
+## Final scripts
+clearly commented
+include processing details
+only anlayses that appear in the final write-up
+
+
+

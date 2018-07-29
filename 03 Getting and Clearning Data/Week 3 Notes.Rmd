@@ -1,0 +1,318 @@
+---
+title: "Week 3 Notes"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{}
+set.seed(13435)
+X <- data.frame("var1" = sample(1:5), "var2"=sample(6:10), "var3"=sample(11:15))
+X <- X[sample(1:5),]; X$var2[c(1,3)] = NA
+
+```
+
+Create data frame with three variables
+scramble variables so they're not in any order, and make some of the values be missing 
+
+```{}
+X[,1]
+X[,"var1"]
+X[1:2,"var2"]
+
+X[(X$var1 <= 3 & X$var3 > 11),]
+X[which(X$var2> 8), ]
+sort(X$var1)
+sort(X$var1, decreasing=T)
+
+X[order(X$var1),] #increasing order
+X[order(X$var1, X$var3), ]
+
+library(plyr)
+arrange(X,var1)
+arrange(X,desc(var1))
+
+X$var4 <- rnorm(5)
+
+Y <- cbind(X, rnorm(5))
+```
+
+### Summarizing Data 
+
+```{}
+if(!file.exists("./data")){dir.create("./data")}
+fileUrl <- link
+download.file(fileUrl, destfile="./data/restaurants.csv", method="curl"
+restDAta <- read.csv(".data/restaurants.csv"))
+
+head(restData, n=3)
+tail(restData, n=3)
+summary(restData)
+str(restData)
+
+quantile(restData$councilDistrict, na.rm=TRUE)
+
+quantile(restDAta$councilDistrict, probs=c(0.5,0.75, 0.9))
+table(restData$zipCode, useNA="ifancy")
+
+##making zip code a table, only one zip code is quoted at a negative value 
+##ifany, if there are any missing values, added col to NA
+
+table(restDAta$councilDistrict, restData$zipCode)
+#two dimensional table 
+
+sum(is.na(restData$councilDistrict))
+
+any(is.na(restData$councilDistrict))
+#look through entire set of values, check if any of values are true, if FALSE,, no NAs
+
+all(restData$zipCode > 0)
+
+colSums(is.na(restData))
+#apply is.na to the data set, take the sum down every col, see that there are 0 Nas for every single variable in the data set
+
+table(restData$zipCode %in% c("21212", "21213"))
+## are there any zip codes equal to one or the other 
+
+restData[restData$zipVode %in% c("21212", "21213"),]
+
+
+xt <- xtabs(Freq ~ Gender + Admit, data=DF)
+
+#Freq in the table, break it down by gender, 
+
+##Flat Tables 
+
+warpbreaks$replicate <- rep(1:9, len = 54)
+xt = xtabs(breaks ~., data=warpbreaks)
+ftable(xt)
+
+fakeData = rnorm(1e5)
+objext.size(fakeData)
+# break down by all other variables 
+
+```
+
+
+
+### Creating New Variables 
+
+missingness indicators
+"cutting up" quantitative variables
+applying transofrmations 
+
+```{}
+
+s1 <- seq(1,10, by=2); s1
+#starts at one, creates new values inc by 2 
+s2 <- seq(1,10, length=3); s2
+#specify length of vector, start at 1 and end at 10 
+x <- c(1,3,8,25,100); seq(along=x)
+#index loop over 5 values, seq along which will create a vector of smae length as , but consec indicies for looping 
+
+##subsetting variables
+restData$nearMe = restData$neighborhood %in% c("Roland Park", "homeland")
+#append variable to df
+table(restData$nearMe)
+
+## create binary variables 
+restData$zipWrong = ifelse(restData$zipCode <0, TRUE, FALSE)
+if less than 0, then true and then if FALSE
+table(restData$zipWrong, restData$zipCode < 0 )
+
+restData$zipGroups = cut(restData$zipCode, breaks=quantile(restData$zipCode))
+table(restData$zipGroups)
+#break up according to quantiles 
+#zip groups is a factor variable where it will break zip code into quantiles 
+table(restData$zipGroups, restData$zipCode)
+
+library(Hmisc)
+restData$zipGroups = cut2(restData$zipCode, g = 4)
+table(restData$zipGroups)
+#break into four groups, don't have to set breaks in advance 
+
+#create favtor variables 
+restData$zcf <- factor(restData$zipCode)
+restData$zcf[1:10]
+
+
+##levels of factor variables
+yesno <- sample(c("yes", "no"), size = 10, replace = TRUE)
+yesnofac = factor(yesno, levels=c("yes", "no"))
+relevel(yesnofac, ref="yes")
+
+##cutting produces factor variables
+
+library(Hmisc); library(plyr)
+restData2 = mutate(restData,zipGroups=cut2(zipCode, g=4))
+#create a new version of the variable and add it to a data set
+# create a new dataframe restData2, apply mutua to old df, add a new variable zipGroups which is a function to one of the original variables 
+#new data frame will be the old data frame with new variables added 
+
+ceiling(x) #3.475 is 4
+floor(x)
+round(x, digits=n)
+signif(x, digits=n) #round to as many sig figs
+
+
+```
+
+
+##Reshaping Data 
+reshape into format you'd like
+GOAL is tidy data 
+each var in a col 
+ea obs in a row
+ea table store one kind of obs 
+
+```{}
+library(reshape2)
+head(mtcars)
+
+##Melting Data Frames 
+
+mtcars$carname <- rownames(mtcars)
+carMelt <- melt(mtcars, id=c("carname", "gear", "cyl"), measure.vars=c("mpg", "hp"))
+head(carMelt, n=3)
+
+# pass the data frame, tell it which variables are ID and which are measure 
+#then create ID values (carname, gear, cyl) 
+#then melt the rest of the values so it's tall and skinny 
+tail(carMet, n=3)
+
+cylData <- dcast(carMelt, cyl ~ variable)
+# pass data set, see ifthe cylinders broken down by diff variables
+cylData <- dcast(carMelt, cyl ~ variable, mean)
+
+## averaging values 
+head(InsectSprays)
+tapply(InsectSprays$count, InsectSprays$spray, sum)
+#sum of count of insects for each of the different sprays
+#apply along an index a function
+# apply to count, along index Spray, the function sum 
+
+##split apply combine 
+spIns = split(InsectSprays$count, InsectSprays$spray)
+spIns
+
+sprCount = lapply(spIns, sum)
+sprCount
+
+unlist(sprCount)
+
+sapply(spIns, sum)
+#use Sapply command to apply and combine 
+
+
+##another way
+library(pyr)
+ddply(InsectSprays,.(spray),summarize,sum=sum(count))
+#take the data set, pass it to ddply
+# spray is the variable to summaruze
+# .() to not use quotes
+#then we want to summarize variable
+# we want to provide a sum sum=sum(count)
+
+##Creating a New Variable)
+spraySums <- ddply(InsectSprays,.(spray), summarize, sum=ave(count, FUN=sum))
+# same length as original dataset
+# summarize spray var
+#summarize the counts, and then sum then up
+#ave function, calc the sum as the ave function applies to count where sub fun is sum 
+#sum for A for every value in the data set 
+```
+
+
+### dplyr
+in a given DF ea obs is rep by 1 row 
+ea col is one var 
+primary implementation that you will use is the default R implementation 
+select -- subset of cols of a df
+filter -- subset of rows
+arrange -- reorder the rows, while pres order of other cols
+rename
+mutate -- transofmrs or adds new vars toa DF
+summarise -- generate summary stat of data frame
+
+the first argument is data frame
+the subseq args describe what to do with it
+the result is a new data frame
+
+###Managing Data Frames with Dplyr
+
+```{}
+library(dplyr)
+chicago <- readRDS("chicago.rds")
+str(chicago)
+names(chicago)
+head(select(chicago, city:dptp))
+##selects all between city and dptp columns 
+head(select(chicago, -(cuty:dptp)))
+#all except those few cols 
+
+i <- match("city", names(chicago))
+chic.f <- filter(chicago, pm25mean2 > 30)
+chic.f <- filter(chicago, pm25mean2 > 30 & tmpd > 80)
+
+chicago <- arrange(chicago, date)
+#arrange by date variable
+#data set is ordered by date
+
+chicago <- arrange(chicago, desc(date))
+
+##rename variables
+chicago <- rename(chicago, pm 25 = pm25tmean2, dewpoint = dptp)
+
+##create or transfrom variables 
+chicago <- mutate(chicago, pm25detrend = pm25 - mean(pm25, na.rm=TRUE))
+
+##groupby function 
+#split a data frame according to certain cat vars 
+
+chicago <- mutate(chicago, tempcat =factor(1 * (tmpd > 80), labels = c("cold", "hot")))
+
+hotcold <- group)by(chicago, tempcat)
+
+summarize(hotcold, pm25 = mean(pm25, na.rm = TRUE), a3 = max(o3tmean2), no2=median(no2tmean2))
+
+chicago <- mutate(chicago, year = as.PSIXlt(date)$year + 1990)
+summarize(years, pm25 = mean(pm25, na.rm = TRUE)
+
+##dplyr implements a special operator that chains diff operators together in a way that allows you to see what operations are happening in a readable way 
+##feed through pipeline to create a new data set 
+
+
+#################
+chicago %>% mutate(month = asPOSIXlt(date)$mon + 1) %>% group_by(month) %>% summarize(pm25 =mean(pm25, na.rm = TRUE)...)
+#################
+```
+
+
+################3
+MERGING DATA
+
+```{}
+
+names(reviews)
+names(solution)
+
+#solution_id and id to merge datasets together 
+mergedData = merge(reviews, solutions, by.x"solution_id", by.y"id", all=TRUE)
+
+intersect(names(solutions), names(reviews))
+#will tell you the common names 
+
+
+#dplyr package
+#straightforward with common id
+df1 = data.frame(id=sample(1:10), x=rnorm(10))
+df2 = data.frame(id=sample(1:10), y=rnorm(10))
+arrange(join(df1, df2), id)
+
+dfList = list(df1, df2)
+join_all(dfList)
+
+```
+

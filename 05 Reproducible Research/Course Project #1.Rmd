@@ -1,0 +1,95 @@
+#Project Title
+Author: Brittany Bennett
+November 11, 2017  
+================================================
+
+First, we will read the data into R.
+```{r}
+## Read the data into R
+url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+download.file(url, "data.zip")
+data <- read.csv(unz("data.zip", "activity.csv"))
+summary(data)
+```
+
+##Histogram
+We may be curious to see what was the most common number of steps in a 5 minute interval. Let's plot a histogram to see.
+
+```{r}
+library(ggplot2)
+fullData <- data[complete.cases(data),]
+qplot(data$steps, geom="histogram")
+```
+
+This histogram didn't give us much information. The plot is skewed to the right because of the enormous amount of missing values.
+
+Next, we'll take out the Zero values to see what the data really look like.
+
+```{r}
+nonZero <- subset(fullData, steps != 0)
+qplot(nonZero$steps, geom= "histogram" )
+```
+
+The mode of the data is computed below.
+```{r}
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+mode <-getmode(nonZero$steps)
+```
+The mode of the data is `r (mode)` 
+
+
+##Mean and Median 
+What does this data really look like? To get a sense, we'll take the mean and median of the steps.
+
+```{r}
+mean <- mean(nonZero$steps)
+median <- median(nonZero$steps)
+```
+
+The mean is `r (mean)` and the median is `r (median)`.
+
+##Average Daily Pattern
+Now let's take a look at the average daily pattern. How many steps were taken on average across all days?
+
+We'll first summarize the data so that we have a table that summarizes the average number of steps per day
+
+```{r}
+library(dplyr)
+averageSteps <- nonZero %>%
+        group_by(date) %>%
+        summarise(average = mean(steps))
+```
+
+
+```{r}
+library(scales) 
+ggplot(averageSteps, aes(x = date, y = average, group =1)) + 
+      geom_line() +
+      geom_point() + 
+      theme_bw()+
+        labs(title="Average Daily Summary",x="Date", y = "Average Number of Steps")+
+       facet_wrap(~Year,ncol=1, scales = "free_x") + 
+        scale_y_continuous() + 
+        scale_x_date(labels = date_format("%d-%b"), breaks = date_breaks("2 weeks")) +
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 8))
+```
+
+Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+Imputing missing values
+
+Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.
+
+Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+Create a new dataset that is equal to the original dataset but with the missing data filled in.
+Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+Are there differences in activity patterns between weekdays and weekends?
+
+For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
+
+Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.

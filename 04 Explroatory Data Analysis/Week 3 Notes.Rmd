@@ -1,0 +1,367 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+##Hierarchal Clustering Methods 
+* organizes things that are close into group
+
+An agglomerative approach
+ - find closest two things
+  - put them together
+  - find next closest 
+  
+  Requires 
+   - a defined distance
+   - a merging approach
+Produces
+ - A tree showing how close things are to each other 
+
+Most important step
+- garbage in -> garbage out 
+Distance or similarity 
+- continuous - euclidean distance
+- continuous - correlation similarity
+- binary - manhattan distance
+Pick a distance/similarity that makes sense for your problem
+
+"taxicab distance"
+
+```{}
+set.seed(1234)
+par(mar = c(0,0,0,0))
+x <- rnorm(12, mean = rep(1:3, each = 4, sd = 0.2))
+y <- rnorm(12, mean = rep(c(1,2,1), each = 4), sd = 0.2)
+plot(x,y, col = "blue", pch = 19, cex =2)
+text(x + 0.05, y + 0.05, labels = as.character(1:12))
+## similate a sample set 
+```
+
+Hierarchal Clustering - dist 
+```{}
+dataFrame <- data.frame(x = x, y = y)
+dist(dataFrame)
+#calcs distance between rows in data frame
+
+
+```
+
+
+Dendrogram
+Doesn't tell you how many clusters there are. Have to cut the tree
+
+```{}
+dataFrame <- data.frame(x = x, y= y)
+distxy <- dist(dataFrame)
+hClustering <- hclust(distxy)
+plot(hClustering)
+
+```
+
+Merging Points - Complete
+Average Distance -- center of gravity of that group of points
+Complete Linkage -- take the farthest two points
+
+```{}
+
+dataFRame <- data.frame(x = x, y = y)
+set.seed(143)
+dataMatrix <- as.matrix(dataFrame)[sample(1:12), ]
+heatmap(dataMatrix)
+
+```
+
+Uses the hierarchal cluster function to organize row and col
+Visualize groups or blocks 
+Reorders rows and cols according to hierarchal clustering
+
+##K-Means Clustering
+how do we define close
+how do we group things
+how do we visualize the grouping
+how do we interpret what we say
+
+Distance or similarity
+-continuous - euclidean distance
+- continous - correlation similarity
+- binary - mangattan distance
+Pick a distance/similarity that makes sense for your problem
+
+partitioning a group of obs into a fixed number of clusters
+- how many clusters of points
+- get centroids of each cluster
+- assign things to closest centroid
+- recalculate centroids
+Requires
+- a defined distance metric
+- a number of clusters
+- an initial guess as to cluster centroids
+Produces
+- final estimate of cluster centroids
+- an assignment of each point to clusters
+
+
+```{}
+set.seed(1234)
+par(mar = c(0,0,0,0))
+x <- rnorm(12, mean = rep(1:3, each = 4), sd = 0.2)
+y <- rnorm(12, mean = rep(c(1,2,1), each = 4), sd = 0.2)
+plot(x,y, col = "blue", pch = 19, cex = 2)
+text(x +0.05, y + 0.05, labels = as.character(1:12))
+
+```
+
+1. cluster definition
+2. recalculate centroids
+3. reassign values
+4. update centroids
+
+kmeans()
+```{}
+dataFrame <- data.frame(x,y)
+kmeansObj <- kmeans(dataFrame, centers= 3)
+names(kmeansObj)
+
+kmeansObj$cluster
+```
+kmeans retruns a list with elements
+prints a cluster element 
+
+```{}
+par(mar = rep(0.2, 4))
+plot(x,y)
+points(kmeansObj$centers, col = 1:3, pch = 3)
+```
+
+Heatmaps
+```{}
+set.seed(1234)
+dataMatrix <- as.matrix(dataFrame)[sample(1:12), ]
+kmeansObj2 <- kmeans(dataMatrix, centers = 3)
+par(mfrow = c(1,2), mar = c(2,4,0.1,0.1))
+image(t(dataMatrix)[, nrow(dataMatrix):1], yaxt = "n")
+image(t(dataMatrix)[, order(kmeansObj$cluster):1], yaxt = "n")
+```
+
+Reordered the rows of the data frame so the clusters are put together
+Use this to look at high dimensional data and reorganize rows and cols and look at clusters that are closer together or farther apart. Can look for patterns
+
+K-means requires a number of clusters
+- pick by eye/intuition
+- pick by cross validation/information theory
+
+K-means is not deterministic
+- different # of clusters
+ different number of iterations
+ 
+ 
+## Principal Components Analysis
+## Singual Value Decomposition 
+
+
+```{}
+
+set.seed(12345)
+par(mar= rep(0,2,4))
+dataMatrix <- matrix(rnorm(400), nrow = 40)
+image(1:10, 1:40, t(dataMatrix) [ , nrow(dataMatrix):1])
+
+#cluster the data
+par(mar = rep(0,2,4))
+heatmap(dataMatrix)
+
+##Add a pattern
+set.seed(678910)
+for (i in 1:40) {
+  #flip a coin
+  coinFlip <- rbinom(1, size = 1, prob = 0.5)
+  # if coin is heads add a common pattern to that row
+  if (coinFlip) {
+    dataMatrix[i, ] <- dataMatrix[i, ] + rep(c(0,3), each = 5)
+  }
+}
+
+par(mar = rep(0.2, 4))
+image(1:10, 1:40, t(dataMatrix) [, nrow(dataMatrix):1])
+
+par(mar = rep(0,2, 4))
+heatmap(dataMatrix)
+
+## patterns in rows and columns
+hh <- hclust(dist(dataMatrix))
+dataMatrixOrdered <- dataMatrix[hh$order, ]
+par(mfrow = c(1, 3))
+image(t(dataMatrixOrdered)[, nrow(dataMatrixOrdered):1])
+plot(rowMeans(dataMatrixOrdered), 40:1, , xlab = "Row Mean", ylab = "Row", pch = 19)
+plot(colMeans(dataMatrixOrdered), xlab = "Column", ylab = "Column Mean", pch = 19)
+
+```
+
+plotted in the middle plot the mean of each of the rows
+x axis have the mean of the row
+See clear shift in mean across the rows 
+
+Across the 10 cols
+Shift in mean of cols
+
+Related Problems
+You have multivariate variables
+- find a new set of multivariate variables that are uncorrelated and explain as much variance as possible
+- if you put all the variables together in one matrix, find the best matrix created with fewer variables that explains the original data
+
+The first goal is statistical and the second goal is data compression
+
+Singula Value Decomposition 
+If X is a mtrix with each variable in a col and each obvs in a row then the SVD is a matrix decomp
+
+X = UDV^T
+where the col of U are orthogonal, the col of V are orthogonal, and D is a disagona matrix
+
+PCA - Principal Component Analysis
+the principal components are equal to the right singual values if you first scale (subtract the mean, divide by the sd) the variables
+
+Components of SVD - u and v
+
+```{}
+svd1 <- svd(scale(dataMatrixOrdered))
+par(mfrow = c(1, 3))
+image(t(dataMatrixOrdered)[, nrow(dataMatrixOrdered):1])
+plot(svd1$u[, 1], 40:1, , xlab = "Row", ylab = "First left singular vector",
+ pch = 19)
+plot(svd1$v[, 1], xlab = "Column", ylab = "First right singular vector", pch = 19)
+```
+
+1st singual vector has a negative value for rows 40 through 18 
+Positive value of remaining rows
+
+1st right singual vector
+also shows the change in the mean
+between the first five and second 5 cols
+
+immediately picked up on the shift of the means
+
+
+Components of the SVD - Variance Explained
+```{}
+par(mfrow = c(1, 2))
+plot(svd1$d, xlab = "Column", ylab = "Singular value", pch = 19)
+plot(svd1$d^2/sum(svd1$d^2), xlab = "Column", ylab = "Prop. of variance explained",
+ pch = 19)
+```
+
+each sing value -- percent of total variation in data 
+components are ordered
+1st -- explains most variation
+
+plot the proportion of variance explained 
+left <- raw singular values 
+divide by te total sum of the total singual values
+
+1st singual value, caputres shift in the mean, captures 40% of the variation in the data
+
+
+Relationship to Principal Components
+
+```{}
+
+svd1 <- svd(scale(dataMatrixOrdered))
+pca1 <- prcomp(dataMatrixOrdered, scale = TRUE)
+plot(pca1$rotation[, 1], svd1$v[, 1], pch = 19, xlab = "Principal Component 1",
+ ylab = "Right Singular Vector 1")
+abline(c(0, 1))
+
+```
+
+SVD/PCA are basically the same thing
+
+Components of the SVD -- VAriance Explained
+
+```{}
+constantMatrix <- dataMatrixOrdered*0
+for(i in 1:dim(dataMatrixOrdered)[1]){constantMatrix[i,] <- rep(c(0,1),each=5)}
+svd1 <- svd(constantMatrix)
+par(mfrow=c(1,3))
+image(t(constantMatrix)[,nrow(constantMatrix):1])
+plot(svd1$d,xlab="Column",ylab="Singular value",pch=19)
+plot(svd1$d^2/sum(svd1$d^2),xlab="Column",ylab="Prop. of variance explained",pch=19)
+
+```
+
+Take the SVD of matrix
+plot the singular values
+
+The first singual variable explains 100% of the variation in the dataset
+
+Really only 1 dimension to this data 
+
+Second Patterns to the DAta Set
+
+```{}
+set.seed(678910)
+for (i in 1:40) {
+ # flip a coin
+ coinFlip1 <- rbinom(1, size = 1, prob = 0.5)
+ coinFlip2 <- rbinom(1, size = 1, prob = 0.5)
+ # if coin is heads add a common pattern to that row
+ if (coinFlip1) {
+ dataMatrix[i, ] <- dataMatrix[i, ] + rep(c(0, 5), each = 5)
+ }
+ if (coinFlip2) {
+ dataMatrix[i, ] <- dataMatrix[i, ] + rep(c(0, 5), 5)
+ }
+}
+hh <- hclust(dist(dataMatrix))
+dataMatrixOrdered <- dataMatrix[hh$order, ]
+
+
+svd2 <- svd(scale(dataMatrixOrdered))
+par(mfrow = c(1, 3))
+image(t(dataMatrixOrdered)[, nrow(dataMatrixOrdered):1])
+plot(rep(c(0, 1), each = 5), pch = 19, xlab = "Column", ylab = "Pattern 1")
+plot(rep(c(0, 1), 5), pch = 19, xlab = "Column", ylab = "Pattern 2")
+
+##v and patterns of variance in rows
+# first five are lower, second five are higher
+#twi different means here
+# right panel, picks up the alternating mean pattern
+# two patterns are roughly cofounded to each other
+svd2 <- svd(scale(dataMatrixOrdered))
+par(mfrow = c(1, 3))
+image(t(dataMatrixOrdered)[, nrow(dataMatrixOrdered):1])
+plot(svd2$v[, 1], pch = 19, xlab = "Column", ylab = "First right singular vector")
+plot(svd2$v[, 2], pch = 19, xlab = "Column", ylab = "Second right singular vector")
+
+
+## d and variance explained
+# right, 1st variance explained 50%
+svd1 <- svd(scale(dataMatrixOrdered))
+par(mfrow = c(1, 2))
+plot(svd1$d, xlab = "Column", ylab = "Singular value", pch = 19)
+plot(svd1$d^2/sum(svd1$d^2), xlab = "Column", ylab = "Percent of variance explained",
+ pch = 19)
+```
+
+
+Missing Values
+Run SVD on missing values, you get an error
+You need to do something about missing values before you run SVD or PCA
+
+Use the impute package to impute the missing data points so you can have a value there
+Takes a missing row and imputes it by k nearest neighbors to that row
+if k = 5
+take 5 rows closest to that data
+Imputing {impute}
+
+```{}
+library(impute) ## Available from http://bioconductor.org
+dataMatrix2 <- dataMatrixOrdered
+dataMatrix2[sample(1:100,size=40,replace=FALSE)] <- NA
+dataMatrix2 <- impute.knn(dataMatrix2)$data
+svd1 <- svd(scale(dataMatrixOrdered)); svd2 <- svd(scale(dataMatrix2))
+par(mfrow=c(1,2)); plot(svd1$v[,1],pch=19); plot(svd2$v[,1],pch=19)
+
+```
+
+
+## Plotting and Color in R
+

@@ -1,0 +1,39 @@
+---
+title: "Course 3 Week 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+data are values of quant or qual variables belonging to a set of items
+
+raw <- original source of data 
+often difficulty for data analyses
+
+data anlysis includes processing 
+keep a record of all that you did 
+
+processed data <- ready for analysis 
+
+raw data
+tidy data set
+code book describing ea variable and its values 
+explicit and exact recipe you used to go from 1 -> 2,3
+
+if (!file.exists("data")){
+dir.create("data")
+}
+
+download.fie()
+*downloads from the internet
+* url, destfile, method 
+
+fileUrl <- "url"
+download.file(fileUrl, destfile = "./data/camera.csv", method = curl)
+curl <- bc https, if from mac specify method 
+list.files("./data")
+
+dateDownloaded <- date()
+dateDownloaded

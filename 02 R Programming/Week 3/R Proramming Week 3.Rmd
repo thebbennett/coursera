@@ -1,0 +1,172 @@
+---
+title: "R Programming Week 3"
+output: html_document
+---
+
+##lapply
+loop over a list and evaluate a function on each element 
+
+3 arguments
+* list 
+* function 
+* other through ...
+
+lapply always returns a list
+
+
+```{r setup, include=FALSE}
+
+x <- list(a=1:5, b=rnorm(10))
+lapply(x, mean)
+
+```
+
+```{}
+x<- 1:4
+lapply(x, runif)
+```
+
+
+```{}
+x<-1:4
+lapply(x, runif, min=0, max=10)
+```
+
+
+lapply make use of anonymous functions (don't have names)
+
+```{}
+
+x <- list(a=matrix(1:4,2,2), b= matrix(1:6, 3, 2))
+lapply(x, function(elt) elt[,1])
+```
+
+
+##sapply 
+simplifies the result of lapply
+if:
+result list length 1: return a vecotr of those elements
+result is a list of vectors of smae length, then will return a matrix
+if it can't figure it out, will return a list 
+
+
+##apply
+evaluate a function over the marigins of an array
+to apply to row or col of a matrix
+
+arguments:
+* array 
+* MARGIN is an integer vector that indicates what should be retained
+* function to appy
+* ... other arguments 
+
+```{}
+x <- matrix(rnorm(200), 20, 10)
+apply(x,2,mean)
+```
+preserve col and collapse rows 
+
+rowSums = apply(x,1,sum)
+rowMEans=apply(x,1,mean)
+colSums = apply(x,2,sum)
+
+```{}
+x <- matrix(rnorm(200), 20, 10)
+apply(x,1,quantile, probs = c(0.25,0.75))
+```
+
+preserve the rows
+
+```{}
+a <- array(rnorm(2 * 2 * 10), c(2,2,10))
+apply(a, c(1.2), mean)
+```
+average of 2x2 matrix is the mean 
+collapse the third dimension
+
+##mapply
+multivariate function apply which applies a function in parallel over a set of arguments 
+
+arguments
+* fun
+* more args
+* simplify 
+
+```{}
+list(rep(1,4), rep(2,3), rep(3,2), rep(4,1))
+
+mapply(rep,1:4, 4:1)
+```
+apply a function to multiple steps of arguments 
+
+```{}
+noise <- function(n,mean,sd){
+  rnorm(n,mean,sd)
+}
+
+mapply(noise, 1:5, 1:5, 2)
+```
+
+##tapply
+function over a subset of a vector 
+
+arguments
+* x is a vector
+* index is a factor 
+* FUN is a function
+* ...
+* simplify
+
+```{}
+x <- c(rnorm(10), runif(10), rnorm(10,1))
+f <- gl(3,10) 
+f
+
+tapply(x,f,mean)
+tapply(x,f,range)
+```
+
+##Split
+split takes a vector or orther objects and splits it into groups determined by a factor or list of factors 
+
+* x is a vector
+* f is a factor
+* drop
+
+split into 3 groups is f is 3
+always turn a list back
+
+```{}
+x <- c(rnrom(10), runif(10), rnorm(10,1))
+f <- split(3,10)
+split(x,f)
+
+lapply(split(x,f), mean)
+```
+
+
+Splitting a data frame
+
+```{}
+library(datasets)
+head(airquality)
+
+s <- split(airquality, airquality$Month)
+lapply(s, function(x) colMeans(x[c("Ozone", "Solar.R", "Wind")]))
+
+sapply(s, function(x) colMeans(x[,c("Ozone", "Solar.R", "Wind")], na.rm = TRUE))
+
+```
+
+
+splitting on more than one level 
+```{}
+x <-rnorm(10)
+f1 <- gl(2,5)
+f2 <- gl(5,2)
+interaction(f1,f2)
+str(split(x,list(f1,f2)))
+```
+
+
+##Debugging Toosl
